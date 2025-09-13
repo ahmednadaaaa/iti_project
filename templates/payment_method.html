@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-method">
+        <h2>Choose Payment Method</h2>
+        <p>You are donating {{ donation.amount }} EGP to {{ donation.project.title }}</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="payment-options">
+                <div class="payment-option">
+                    <input type="radio" id="card" name="payment_method" value="card" checked>
+                    <label for="card">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Credit/Debit Card</span>
+                    </label>
+                </div>
+                
+                <div class="payment-option">
+                    <input type="radio" id="cash" name="payment_method" value="cash">
+                    <label for="cash">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Cash Payment</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Continue</button>
+            <a href="{% url 'crowdfunding:project_detail' donation.project.pk %}" class="btn btn-outline">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

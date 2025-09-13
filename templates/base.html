@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Crowdfunding{% endblock %}</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'Styles/home.css' %}">
+
+  <style>
+    .search-container {
+        position: relative;
+        margin: 0 20px;
+        flex: 1;
+        max-width: 400px;
+    }
+    
+    .search-form {
+        display: flex;
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border: 1px solid #d1d3e2;
+        border-radius: 20px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b7b9cc;
+        pointer-events: none;
+    }
+    
+    .search-btn {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #4e73df;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .search-input:focus + .search-btn {
+        opacity: 1;
+    }
+    
+    @media (max-width: 992px) {
+        .search-container {
+            order: 3;
+            max-width: 100%;
+            margin: 15px 0;
+        }
+
+        nav {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a href="{% url 'crowdfunding:home' %}" class="logo">
+          <i class="fas fa-hand-holding-heart"></i>
+          Tamweel
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="{% url 'crowdfunding:home' %}" class="nav-link active" data-page="home">Home</a></li>
+          <li><a href="{% url 'crowdfunding:project_search' %}" class="nav-link" data-page="discover">Discover</a></li>
+          <li><a href="{% url 'crowdfunding:project_search' %}?category=1" class="nav-link" data-page="categories">Categories</a></li>
+          <li><a href="#" class="nav-link" data-page="how-it-works">How It Works</a></li>
+          <li><a href="#" class="nav-link" data-page="about-us">About Us</a></li>
+        </ul>
+        
+        <div class="search-container">
+          <form method="get" action="{% url 'crowdfunding:project_search' %}" class="search-form">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" name="title" class="search-input" placeholder="Search projects..." value="{{ request.GET.title }}">
+            <button type="submit" class="search-btn">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </form>
+        </div>
+        
+        {% if user.is_authenticated %}
+          <div class="auth-buttons">
+            <a href="{% url 'accounts:profile' %}">
+              <button class="btn btn-outline" id="profileBtn">Profile</button>
+            </a>
+            <a href="{% url 'accounts:logout' %}">
+              <button class="btn btn-primary" id="logoutBtn">Logout</button>
+            </a>
+          </div>
+        {% else %}
+          <div class="auth-buttons">
+            <a href="{% url 'accounts:login' %}">
+              <button class="btn btn-outline" id="loginBtn">Login</button>
+            </a>
+            <a href="{% url 'accounts:register' %}">
+              <button class="btn btn-primary" id="registerBtn">Register</button>
+            </a>
+          </div>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% block content %}
+  {% endblock %}
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Tamweel</h3>
+          <p>Empowering Egyptians to bring creative projects to life through crowdfunding.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="{% url 'crowdfunding:home' %}" class="nav-link" data-page="home">Home</a></li>
+            <li><a href="{% url 'crowdfunding:project_search' %}" class="nav-link" data-page="discover">Discover</a></li>
+            <li><a href="{% url 'crowdfunding:project_search' %}" class="nav-link" data-page="categories">Categories</a></li>
+            <li><a href="#" class="nav-link" data-page="how-it-works">How It Works</a></li>
+            <li><a href="#" class="nav-link" data-page="about-us">About Us</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Contact Us</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Newsletter</h3>
+          <p>Subscribe to our newsletter to get updates on new projects.</p>
+          <form method="post" action="#">
+            {% csrf_token %}
+            <div>
+              <input type="email" name="email" placeholder="Your Email Address" style="width: 100%; padding: 12px; border: 1px solid #d1d3e2; border-radius: 4px; margin-bottom: 10px;">
+            </div>
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        <p>&copy; 2023 Tamweel. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Local JS -->
+  <script src="{% static 'JS/home.js' %}"></script>
+  
+  <!-- Search functionality script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // جعل الروابط في navigation تعمل
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.getAttribute('href') === '#') {
+            e.preventDefault();
+          }
+        });
+      });
+      
+      // تحسين تجربة البحث
+      const searchForm = document.querySelector('.search-form');
+      const searchInput = document.querySelector('.search-input');
+      
+      searchForm.addEventListener('submit', function(e) {
+        if (searchInput.value.trim() === '') {
+          e.preventDefault();
+          searchInput.focus();
+        }
+      });
+      
+      // حفظ قيمة البحث عند تحديث الصفحة
+      if (searchInput.value) {
+        searchInput.focus();
+      }
+    });
+  </script>
+</body>
+</html>

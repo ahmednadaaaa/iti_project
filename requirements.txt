@@ -1,0 +1,8 @@
+Django>=4.2
+django-taggit
+Pillow
+django-allauth
+stripe
+requests
+PyJWT
+cryptography

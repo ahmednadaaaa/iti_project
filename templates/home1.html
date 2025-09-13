@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-content active" id="home">
+    <section class="hero">
+        <div class="container">
+            <h1>Empowering Dreams, Building Futures</h1>
+            <p>Join Egypt's leading crowdfunding platform to bring creative projects to life or support innovative ideas that matter to you.</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'crowdfunding:create_project' %}" class="btn btn-primary">
+                    <button class="btn btn-success">Start a Project</button>
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">
+                    <button class="btn btn-success">Get Started</button>
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Top Projects Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Top Projects</h2>
+                <p>Discover the most promising projects on our platform</p>
+            </div>
+    
+            <div class="projects-grid">
+                {% for project in top_rated_projects %}
+                <div class="project-card">
+                    {% if project.images.first %}
+                        <div class="project-image">
+                            <img src="{{ project.images.first.image.url }}" alt="{{ project.title }}">
+                        </div>
+                    {% else %}
+                        <div class="project-image" style="background:#ddd; height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <span>No Image</span>
+                        </div>
+                    {% endif %}
+    
+                    <div class="project-content">
+                        <h3 class="project-title">{{ project.title }}</h3>
+                        <p class="project-description">{{ project.details|truncatewords:20 }}</p>
+                        
+                        <div class="project-tags">
+                            <span class="tag">{{ project.category.name }}</span>
+                        </div>
+                        
+                        <div class="project-progress">
+                            <div class="progress-bar" style="width: {{ project.donation_percentage }}%;"></div>
+                        </div>
+                        
+                        <div class="project-stats">
+                            <span><strong>{{ project.donation_percentage }}%</strong> funded</span>
+                            <span><strong>{{ project.total_donated }} EGP</strong> raised</span>
+                        </div>
+                        
+                        <a href="{% url 'crowdfunding:project_detail' project.pk %}" class="btn btn-primary" style="width: 100%;">View Project</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No top-rated projects available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Projects Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Latest Projects</h2>
+                <p>Discover the newest projects on our platform</p>
+            </div>
+
+            <div class="projects-grid">
+                {% for project in latest_projects %}
+                <div class="project-card">
+                    {% if project.images.first %}
+                        <div class="project-image">
+                            <img src="{{ project.images.first.image.url }}" alt="{{ project.title }}">
+                        </div>
+                    {% else %}
+                        <div class="project-image" style="background:#ddd; height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <span>No Image</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="project-content">
+                        <h3 class="project-title">{{ project.title }}</h3>
+                        <p class="project-description">{{ project.details|truncatewords:20 }}</p>
+                        
+                        <div class="project-tags">
+                            <span class="tag">{{ project.category.name }}</span>
+                        </div>
+                        
+                        <div class="project-progress">
+                            <div class="progress-bar" style="width: {{ project.donation_percentage }}%;"></div>
+                        </div>
+                        
+                        <div class="project-stats">
+                            <span><strong>{{ project.donation_percentage }}%</strong> funded</span>
+                            <span><strong>{{ project.total_donated }} EGP</strong> raised</span>
+                        </div>
+                        
+                        <a href="{% url 'crowdfunding:project_detail' project.pk %}" class="btn btn-primary" style="width: 100%;">View Project</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No latest projects available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-outline">View All Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Projects</h2>
+                <p>Discover specially selected projects on our platform</p>
+            </div>
+
+            <div class="projects-grid">
+                {% for project in featured_projects %}
+                <div class="project-card">
+                    {% if project.images.first %}
+                        <div class="project-image">
+                            <img src="{{ project.images.first.image.url }}" alt="{{ project.title }}">
+                        </div>
+                    {% else %}
+                        <div class="project-image" style="background:#ddd; height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <span>No Image</span>
+                        </div>
+                    {% endif %}
+
+                    <div class="project-content">
+                        <h3 class="project-title">{{ project.title }}</h3>
+                        <p class="project-description">{{ project.details|truncatewords:20 }}</p>
+                        
+                        <div class="project-tags">
+                            <span class="tag">{{ project.category.name }}</span>
+                        </div>
+                        
+                        <div class="project-progress">
+                            <div class="progress-bar" style="width: {{ project.donation_percentage }}%;"></div>
+                        </div>
+                        
+                        <div class="project-stats">
+                            <span><strong>{{ project.donation_percentage }}%</strong> funded</span>
+                            <span><strong>{{ project.total_donated }} EGP</strong> raised</span>
+                        </div>
+                        
+                        <a href="{% url 'crowdfunding:project_detail' project.pk %}" class="btn btn-primary" style="width: 100%;">View Project</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No featured projects available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="#" class="btn btn-outline">View All Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Browse by Category</h2>
+                <p>Explore projects by category</p>
+            </div>
+
+            <div class="categories-grid">
+                {% for category in categories %}
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-{{ category.icon|default:'folder' }}"></i>
+                    </div>
+                    <h3>{{ category.name }}</h3>
+                    <p>{{ category.project_set.count }} projects</p>
+                    <a href="?category={{ category.id }}" class="btn btn-outline">Explore</a>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No categories available at the moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(135deg, var(--primary) 0%, #2a4cbf 100%);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    /* Sections */
+    .section {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    .section-title h2 {
+        font-size: 2rem;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .section-title p {
+        color: var(--gray);
+    }
+    
+    /* Projects Grid */
+    .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .project-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .project-image {
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .project-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .project-content {
+        padding: 1.5rem;
+    }
+    
+    .project-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+    }
+    
+    .project-description {
+        color: var(--gray);
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+    
+    .project-tags {
+        margin-bottom: 1rem;
+    }
+    
+    .tag {
+        display: inline-block;
+        background: #eaecf4;
+        color: var(--dark);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+    }
+    
+    .project-progress {
+        height: 8px;
+        background: #eaecf4;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: var(--primary);
+        border-radius: 4px;
+        transition: width 0.3s;
+    }
+    
+    .project-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Categories Grid */
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .category-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .category-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+    }
+    
+    .category-card h3 {
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+    }
+    
+    .category-card p {
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+    
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s;
+        text-align: center;
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background: #2a4cbf;
+    }
+    
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background: #169c6b;
+    }
+    
+    .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+    }
+    
+    .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--gray);
+        grid-column: 1 / -1;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            font-size: 1rem;
+        }
+        
+        .projects-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .categories-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+</style>
+{% endblock %}

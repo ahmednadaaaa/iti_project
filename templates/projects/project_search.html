@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Search Projects - Tamweel{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Header -->
+  <div class="search-header">
+    <h1>Search Results</h1>
+    <p>Projects matching your search</p>
+  </div>
+
+  <!-- Results Section -->
+  <div class="search-results-section">
+    <div class="results-header">
+      <p class="results-count">
+        {{ search_results.paginator.count }} project{{ search_results.paginator.count|pluralize }} found
+      </p>
+    </div>
+
+    {% if search_results %}
+    <div class="projects-grid">
+      {% for project in search_results %}
+      <div class="project-card">
+        <div class="project-card-image">
+          {% if project.images.first %}
+          <div class="project-image">
+            <img src="{{ project.images.first.image.url }}" style="width:600px; height:500px;" alt="Project Image">
+        </div>
+          {% else %}
+          <img src="https://placehold.co/600x400/4e73df/white" alt="{{ project.title }}">
+          {% endif %}
+          <div class="project-card-category">{{ project.category.name }}</div>
+          {% if project.is_canceled %}
+          <div class="project-card-status canceled">Canceled</div>
+          {% elif project.end_time < now %}
+          <div class="project-card-status completed">Completed</div>
+          {% else %}
+          <div class="project-card-status active">Active</div>
+          {% endif %}
+        </div>
+        
+        <div class="project-card-content">
+          <h3 class="project-card-title">{{ project.title }}</h3>
+          <p class="project-card-description">{{ project.description|truncatewords:20 }}</p>
+          
+          <div class="project-card-progress">
+            <div class="project-card-progress-bar" style="width: {{ project.percent_funded }}%;"></div>
+          </div>
+          
+          <div class="project-card-stats">
+            <div class="stat"><strong>{{ project.percent_funded }}%</strong> funded</div>
+            <div class="stat"><strong>£{{ project.total_donations }}</strong> raised</div>
+            <div class="stat"><strong>{{ project.days_left }}</strong> days left</div>
+          </div>
+          
+          <div class="project-card-footer">
+            <a href="{% url 'crowdfunding:project_detail' project.pk %}" class="btn btn-primary">View Project</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if search_results.has_other_pages %}
+    <div class="pagination">
+      {% if search_results.has_previous %}
+      <a href="?title={{ request.GET.title }}&page={{ search_results.previous_page_number }}" class="page-link">Previous</a>
+      {% endif %}
+
+      {% for num in search_results.paginator.page_range %}
+        {% if search_results.number == num %}
+        <span class="page-link current">{{ num }}</span>
+        {% elif num > search_results.number|add:'-3' and num < search_results.number|add:'3' %}
+        <a href="?title={{ request.GET.title }}&page={{ num }}" class="page-link">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if search_results.has_next %}
+      <a href="?title={{ request.GET.title }}&page={{ search_results.next_page_number }}" class="page-link">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="no-results">
+      <h3>No projects found</h3>
+      <p>Try another search keyword</p>
+      <a href="{% url 'crowdfunding:home' %}" class="btn btn-primary">Back to Home</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

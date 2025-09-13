@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Details - Tamweel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'Styles/project_details.css' %}">
+    <style>
+        .search-container {
+            position: relative;
+            margin: 0 20px;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #d1d3e2;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #b7b9cc;
+        }
+        
+        @media (max-width: 992px) {
+            .search-container {
+                order: 3;
+                max-width: 100%;
+                margin: 15px 0;
+            }
+        
+            nav {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+        }
+
+        /* أنماط إضافية للنجوم في التقييم */
+        .user-stars label {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .user-stars input[type="radio"] {
+            display: none;
+        }
+        
+        .user-stars .fas.fa-star {
+            color: #ddd;
+            font-size: 24px;
+            transition: color 0.2s;
+        }
+        
+        .user-stars input[type="radio"]:checked ~ .fas.fa-star,
+        .user-stars label:hover .fas.fa-star,
+        .user-stars label:hover ~ label .fas.fa-star {
+            color: #f1c40f;
+        }
+        
+        .alert {
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error, .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* تحسين مظهر الردود */
+        .reply-form {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .comment.reply {
+            margin-left: 50px;
+            border-left: 3px solid #4e73df;
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="{% url 'crowdfunding:home' %}" class="logo">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    Tamweel
+                </a>
+
+                <ul class="nav-links">
+                    <li><a href="{% url 'crowdfunding:home' %}" class="nav-link active" data-page="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-page="discover">Discover</a></li>
+                    <li><a href="#" class="nav-link" data-page="categories">Categories</a></li>
+                    <li><a href="#" class="nav-link" data-page="how-it-works">How it Works</a></li>
+                    <li><a href="#" class="nav-link" data-page="about-us">About Us</a></li>
+                </ul>
+                
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search projects...">
+                </div>
+                
+                {% if user.is_authenticated %}
+                    <div class="auth-buttons">
+                        <a href="{% url 'accounts:profile' %}">
+                            <button class="btn btn-outline" id="profileBtn">Profile</button>
+                        </a>
+                        <a href="{% url 'accounts:logout' %}">
+                            <button class="btn btn-primary" id="logoutBtn">Logout</button>
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="auth-buttons">
+                        <a href="{% url 'accounts:login' %}">
+                            <button class="btn btn-outline" id="loginBtn">Login</button>
+                        </a>
+                        <a href="{% url 'accounts:register' %}">
+                            <button class="btn btn-primary" id="registerBtn">Register</button>
+                        </a>
+                    </div>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Project Details -->
+    <div class="container">
+        <div class="project-details">
+            {% for img in images %}
+            <div class="project-image">
+                <img src="{{ img.image.url }}" style="width:600px; height:500px;" alt="Project Image">
+            </div>
+            {% endfor %}
+            
+            <div class="project-info">
+                <h1 class="project-title">{{ project.title }}</h1>
+                
+                <div class="project-creator">
+                    <div class="creator-avatar">
+                        {{ project.creator.username|make_list|first|upper }}
+                    </div>
+                    <div>
+                        <div>{{ project.creator.username }}</div>
+                        <div style="color: var(--gray); font-size: 0.9rem;">{{ project.start_time|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+                
+                <div class="project-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">{{ project.donation_percentage }}%</div>
+                        <div class="stat-label">Funded</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ project.total_donated }} EGP</div>
+                        <div class="stat-label">Raised</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">{{ project.category.name }}</div>
+                        <div class="stat-label">Category</div>
+                    </div>
+                </div>
+                
+                <div class="project-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ project.donation_percentage }}%;"></div>
+                    </div>
+                    <div class="progress-info">
+                        <span>{{ project.total_donated }} EGP raised</span>
+                        <span>{{ project.total_target }} EGP goal</span>
+                    </div>
+                </div>
+                
+                <p>{{ project.details }}</p>
+                <div class="project-actions">
+                    <a href="{% url 'crowdfunding:create_donation' project.id %}" class="btn btn-success" style="flex: 2;">Donate Now</a>
+                    <button class="btn btn-outline" style="flex: 1;"><i class="fas fa-share-alt"></i> Share</button>
+                    <button class="btn btn-outline" style="flex: 1;"><i class="fas fa-heart"></i> Save</button>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- Rating Section -->
+        <div class="rating-section">
+            <div class="rating-header">
+                <h2 class="rating-title">Project Rating</h2>
+                <div class="rating-stars">
+                    <div class="average-rating">{{ avg_rating|floatformat:1 }}</div>
+        
+                    <div class="stars">
+                        {% for i in "12345" %}
+                            {% if avg_rating >= forloop.counter %}
+                                <i class="fas fa-star"></i>
+                            {% elif avg_rating >= forloop.counter|add:-0.5 %}
+                                <i class="fas fa-star-half-alt"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+        
+                    <div class="rating-count">({{ reviews_count }} reviews)</div>
+                </div>
+            </div>
+            
+            {% if user.is_authenticated %}
+            <div class="rate-project">
+                <h3 class="rate-title">Rate this project</h3>
+                <form method="post" action="{% url 'crowdfunding:rate_project' project.pk %}">
+                    {% csrf_token %}
+                    <div class="user-stars">
+                        {% for i in "12345" %}
+                            <label>
+                                <input type="radio" name="value" value="{{ forloop.counter }}" {% if user_rating == forloop.counter %}checked{% endif %}>
+                                <i class="fas fa-star"></i>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Submit Rating</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="rate-project">
+                <p><a href="{% url 'accounts:login' %}">Login</a> to rate this project</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <h2 class="comments-title">Comments</h2>
+                <div class="comments-count">{{ comments.count }} comment{{ comments.count|pluralize }}</div>
+            </div>
+            
+            <!-- عرض رسائل الموقع -->
+            {% if messages %}
+                <div class="mt-3">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if user.is_authenticated %}
+            <!-- Comment Form -->
+            <div class="comment-form">
+                <form method="post" action="{% url 'crowdfunding:add_comment' project.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent" value="">
+                    <div class="form-group">
+                        <textarea class="form-control" name="text" placeholder="Add your comment..." required></textarea>
+                        {% if comment_form.text.errors %}
+                            <div class="alert alert-danger mt-2">
+                                {% for error in comment_form.text.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="comment-form">
+                <p><a href="{% url 'accounts:login' %}">Login</a> to post a comment</p>
+            </div>
+            {% endif %}
+            
+            <!-- Comments List -->
+            <div class="comments-list">
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-avatar">
+                        {% if comment.user %}
+                            {{ comment.user.username|make_list|first|upper }}
+                        {% else %}
+                            AN
+                        {% endif %}
+                    </div>
+                    <div class="comment-content">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                {% if comment.user %}
+                                    {{ comment.user.username }}
+                                {% else %}
+                                    Anonymous
+                                {% endif %}
+                            </div>
+                            <div class="comment-date">{{ comment.created_at|timesince }} ago</div>
+                        </div>
+                        <p class="comment-text">{{ comment.text }}</p>
+                        <div class="comment-actions">
+                            <span class="comment-action"><i class="fas fa-thumbs-up"></i> Like (0)</span>
+                            
+                            {% if user.is_authenticated %}
+                            <span class="comment-action reply-trigger" data-comment-id="{{ comment.id }}">
+                                <i class="fas fa-reply"></i> Reply
+                            </span>
+                            <span class="comment-action report-action"><i class="fas fa-flag"></i> Report</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Reply Form (مخفي بشكل افتراضي) -->
+                        {% if user.is_authenticated %}
+                        <div class="reply-form mt-3" id="reply-form-{{ comment.id }}" style="display: none;">
+                            <form method="post" action="{% url 'crowdfunding:add_comment' project.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="parent" value="{{ comment.id }}">
+                                <div class="form-group">
+                                    <textarea class="form-control" name="text" placeholder="Write a reply..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Reply</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary cancel-reply">Cancel</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- الردود -->
+                        {% for reply in comment.replies.all %}
+                        <div class="comment reply mt-3">
+                            <div class="comment-avatar">
+                                {% if reply.user %}
+                                    {{ reply.user.username|make_list|first|upper }}
+                                {% else %}
+                                    AN
+                                {% endif %}
+                            </div>
+                            <div class="comment-content">
+                                <div class="comment-header">
+                                    <div class="comment-author">
+                                        {% if reply.user %}
+                                            {{ reply.user.username }}
+                                        {% else %}
+                                            Anonymous
+                                        {% endif %}
+                                    </div>
+                                    <div class="comment-date">{{ reply.created_at|timesince }} ago</div>
+                                </div>
+                                <p class="comment-text">{{ reply.text }}</p>
+                                <div class="comment-actions">
+                                    <span class="comment-action"><i class="fas fa-thumbs-up"></i> Like (0)</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Similar Projects -->
+        <div class="similar-projects">
+            <div class="section-title">
+                <h2>Similar Projects</h2>
+                <p>Other projects you might be interested in</p>
+            </div>
+            
+            <div class="projects-grid">
+                {% for sp in similar %}
+                <div class="project-card">
+                    <div class="project-card-image">
+                        {% if sp.images.first %}
+                        <img src="{{ sp.images.first.image.url }}" alt="{{ sp.title }}">
+                        {% else %}
+                        <img src="https://placehold.co/600x400/4e73df/white" alt="{{ sp.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="project-card-content">
+                        <h3 class="project-card-title">{{ sp.title }}</h3>
+                        <p class="project-card-description">{{ sp.details|truncatewords:15 }}</p>
+                        
+                        <div class="project-card-progress">
+                            <div class="project-card-progress-bar" style="width: {{ sp.donation_percentage }}%;"></div>
+                        </div>
+                        
+                        <div class="project-card-stats">
+                            <span><strong>{{ sp.donation_percentage }}%</strong> funded</span>
+                            <span><strong>{{ sp.total_donated }} EGP</strong> raised</span>
+                        </div>
+                        
+                        <a href="{% url 'crowdfunding:project_detail' sp.pk %}" class="btn btn-primary" style="width: 100%;">View Project</a>
+                    </div>
+                </div>
+                {% empty %}
+                <p>No similar projects found.</p>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% if project.creator == user %}
+        <div class="mt-4 text-center">
+            <form method="post" action="{% url 'crowdfunding:cancel_project' project.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-danger">Cancel Project</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Tamweel</h3>
+                    <p>Empowering Egyptians to bring creative projects to life through crowdfunding.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'crowdfunding:home' %}">Home</a></li>
+                        <li><a href="#">Discover</a></li>
+                        <li><a href="#">Categories</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">About Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to our newsletter to get updates on new projects.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Your Email Address" style="width: 100%; padding: 12px; border: 1px solid #d1d3e2; border-radius: 4px; margin-bottom: 10px;">
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 Tamweel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'JS/project_details.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // إظهار/إخفاء نماذج الرد
+            document.querySelectorAll('.reply-trigger').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const commentId = this.getAttribute('data-comment-id');
+                    const replyForm = document.getElementById('reply-form-' + commentId);
+                    
+                    // إخفاء جميع نماذج الرد الأخرى
+                    document.querySelectorAll('.reply-form').forEach(function(form) {
+                        if (form.id !== 'reply-form-' + commentId) {
+                            form.style.display = 'none';
+                        }
+                    });
+                    
+                    // إظهار أو إخفاء نموذج الرد الحالي
+                    if (replyForm.style.display === 'none') {
+                        replyForm.style.display = 'block';
+                    } else {
+                        replyForm.style.display = 'none';
+                    }
+                });
+            });
+            
+            // إلغاء الرد
+            document.querySelectorAll('.cancel-reply').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    this.closest('.reply-form').style.display = 'none';
+                });
+            });
+            
+            // معالجة النجوم في التقييم
+            document.querySelectorAll('.user-stars label').forEach(function(label) {
+                label.addEventListener('click', function() {
+                    const stars = this.parentElement.querySelectorAll('label');
+                    const index = Array.from(stars).indexOf(this);
+                    
+                    stars.forEach(function(star, i) {
+                        if (i <= index) {
+                            star.querySelector('.fas.fa-star').style.color = '#f1c40f';
+                        } else {
+                            star.querySelector('.fas.fa-star').style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

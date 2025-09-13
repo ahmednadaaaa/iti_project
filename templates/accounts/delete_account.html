@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4 text-center">
+  <h2 class="text-danger">Delete Account</h2>
+  <p>Are you sure? This action cannot be undone.</p>
+  {% if messages %}{% for msg in messages %}<div class="alert alert-{{ msg.tags }}">{{ msg }}</div>{% endfor %}{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3"><label>Enter password to confirm</label><input type="password" name="password" class="form-control" required></div>
+    <button class="btn btn-danger">Delete My Account</button>
+    <a class="btn btn-secondary" href="{% url 'accounts:profile' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

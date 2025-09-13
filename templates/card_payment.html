@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="card-payment">
+        <h2>Card Payment</h2>
+        <p>You are donating {{ donation.amount }} EGP to {{ donation.project.title }}</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Payment Method</label>
+                {{ form.payment_method }}
+            </div>
+            
+            <div class="form-group">
+                <label>Card Number</label>
+                {{ form.card_number }}
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Expiration Date</label>
+                    {{ form.expire }}
+                </div>
+                
+                <div class="form-group">
+                    <label>CVV/CVC</label>
+                    {{ form.security_code }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Shipping Address</label>
+                {{ form.shipment_address }}
+            </div>
+            
+            <div class="form-group">
+                <label>Phone Number</label>
+                {{ form.shipment_phone }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Pay Now</button>
+            <a href="{% url 'crowdfunding:donation_payment' donation.id %}" class="btn btn-outline">Back</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
