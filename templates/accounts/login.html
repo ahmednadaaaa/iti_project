@@ -473,7 +473,7 @@
             
             <div class="auth-content">
                 <!-- Login Form -->
-                <form class="auth-form active" method="post">
+                <form class="auth-form active" method="post" action="{% url 'accounts:login' %}">
                     {% csrf_token %}
                     
                     {% if messages %}
@@ -498,7 +498,7 @@
                     <div class="form-check">
                         <input type="checkbox" id="rememberMe" class="form-check-input">
                         <label for="rememberMe">Remember me</label>
-                        <a href="#" style="margin-left: auto; font-size: 0.9rem; color: var(--primary);">Forgot Password?</a>
+                        <a href="#" onclick="showResetForm()" style="margin-left: auto; font-size: 0.9rem; color: var(--primary);">Forgot Password?</a>
                     </div>
                     
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Login</button>
@@ -523,6 +523,26 @@
                     
                     <div class="form-footer">
                         <p>Don't have an account? <a href="{% url 'accounts:register' %}">Register now</a></p>
+                    </div>
+                </form>
+                
+                <!-- Password Reset Request Form -->
+                <form id="resetRequestForm" class="auth-form" method="post" action="{% url 'accounts:reset_password' %}">
+                    {% csrf_token %}
+                    <div class="auth-header" style="background: #36b9cc; padding: 1rem; margin: -2rem -2rem 2rem -2rem;">
+                        <h2>Reset Your Password</h2>
+                        <p>Enter your email address and we'll send you instructions to reset your password.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Send Reset Instructions</button>
+                    
+                    <div class="form-footer">
+                        <p>Remember your password? <a href="#" onclick="showLoginForm()">Back to Login</a></p>
                     </div>
                 </form>
             </div>
@@ -600,56 +620,30 @@
             }
         }
         
+        // Show password reset form
+        function showResetForm() {
+            document.querySelector('.auth-form.active').classList.remove('active');
+            document.getElementById('resetRequestForm').classList.add('active');
+        }
+        
+        // Show login form
+        function showLoginForm() {
+            document.getElementById('resetRequestForm').classList.remove('active');
+            document.querySelector('.auth-form').classList.add('active');
+        }
+        
         // Add event listeners to toggle buttons
         document.querySelectorAll('.toggle-password').forEach(button => {
             const inputId = button.parentElement.querySelector('input').id;
             button.addEventListener('click', () => togglePassword(inputId));
         });
         
-        // Switch between login and register forms
+        // Check if URL contains reset password parameters
         document.addEventListener('DOMContentLoaded', function() {
-            const switchToRegister = document.getElementById('switchToRegister');
-            const switchToLogin = document.getElementById('switchToLogin');
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const loginTab = document.querySelector('[data-tab="login"]');
-            const registerTab = document.querySelector('[data-tab="register"]');
-            
-            if (switchToRegister && switchToLogin) {
-                switchToRegister.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    loginForm.classList.remove('active');
-                    registerForm.classList.add('active');
-                    loginTab.classList.remove('active');
-                    registerTab.classList.add('active');
-                });
-                
-                switchToLogin.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    registerForm.classList.remove('active');
-                    loginForm.classList.add('active');
-                    registerTab.classList.remove('active');
-                    loginTab.classList.add('active');
-                });
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('reset') && urlParams.get('reset') === 'true') {
+                showResetForm();
             }
-            
-            // Tab switching
-            const tabs = document.querySelectorAll('.auth-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabName = this.getAttribute('data-tab');
-                    
-                    // Update active tab
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show corresponding form
-                    document.querySelectorAll('.auth-form').forEach(form => {
-                        form.classList.remove('active');
-                    });
-                    document.getElementById(tabName + 'Form').classList.add('active');
-                });
-            });
         });
     </script>
 </body>

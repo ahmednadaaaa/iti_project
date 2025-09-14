@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from .api import *
-
 app_name = 'crowdfunding'
 
 urlpatterns = [
